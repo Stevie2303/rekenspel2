@@ -78,9 +78,7 @@
   </style>
 </head>
 <body>
-
-  <h1>Welk plaatje hoort bij het woord?</h1>
-
+  <h1 id="pagetitel">Kies het juiste spel</h1>
   <div id="menu">
     <label>
       Naam van het kind:
@@ -121,6 +119,8 @@
   <button id="pdf-btn" onclick="downloadPDF()">Download verslag als PDF</button>
 
   <script>
+    
+
     const allRounds = {
   easy: [
     { word: "Hund", img: "https://upload.wikimedia.org/wikipedia/commons/d/d6/Thai-Ridgeback.jpg" },
@@ -189,7 +189,7 @@ let difficulty = "easy";
       reportData.length = 0;
       document.getElementById("menu").style.display = "none";
       document.getElementById("pdf-btn").style.display = "none";
-  
+      document.getElementById("pagetitel").textContent = "Woordenschat Spel";
       document.getElementById("progress-container-woordenschat").style.display = "block";
       document.getElementById("progress-container-rekenen").style.display = "none";
       updateProgressBarWoordenschat();
@@ -355,7 +355,7 @@ speechSynthesis.speak(utterance);
       document.getElementById("word").textContent = opdracht.vraag;
       document.getElementById("feedback").textContent = "";
       document.getElementById("images").innerHTML = "";
-
+      document.getElementById("pagetitel").textContent = "Reken Spel";
       const wrapper = document.createElement("div");
       wrapper.style.display = "flex";
       wrapper.style.flexDirection = "column";  // <-- dit zorgt voor verticale volgorde
@@ -376,7 +376,7 @@ speechSynthesis.speak(utterance);
         const knop = document.createElement("button");
         knop.textContent = optie;
         knop.style.margin = "10px";
-        knop.style.padding = "15px 25px";
+        knop.style.padding = "30px 50px";
         knop.style.fontSize = "18px";
         knop.style.width = "100px";  // optioneel, gelijke breedte
      knop.onclick = () => {

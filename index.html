@@ -118,6 +118,7 @@
   <div id="score"></div>
   <button id="pdf-btn" onclick="downloadPDF()">Download verslag als PDF</button>
   <button id="reken-pdf-btn" style="display:none;" onclick="downloadRekenPDF()">Download Rekenspel PDF</button>
+  <button id="reken-herstart-btn" style="display:none;" onclick="startGamerekenen()">Opnieuw starten</button>
   <script>
     
 
@@ -308,7 +309,7 @@ speechSynthesis.speak(utterance);
   </script>
   <script>
     let rekenResultaten = [];
-    const requiredCorrectRekenen =10;
+    const requiredCorrectRekenen = 2;
     let rekenscore = 0;
     function updateProgressBarRekenen() {
       const progress = (rekenscore / requiredCorrectRekenen) * 100;
@@ -322,7 +323,7 @@ speechSynthesis.speak(utterance);
     { vraag: "Wie viele Laptops siehst du?", img: "https://stevie2303.github.io/rekenspel2/4laptops.jpg", opties: ["4", "5", "6"], juist: "4" },
     { vraag: "Wie viele Töpfe siehst du?", img: "https://stevie2303.github.io/rekenspel2/1pot.jpg", opties: ["1", "2", "3"], juist: "1" },
     { vraag: "Wie viele Bären siehst du?", img: "https://stevie2303.github.io/rekenspel2/2beren.jpg", opties: ["2", "3", "4"], juist: "2" },
-    { vraag: "Wie viele Tiger siehst du?", img: "https://stevie2303.github.io/rekenspel2/3tijgers.jpg", opties: ["2", "3", "4"], juist: "3" }
+    { vraag: "Wie viele Tiger siehst du?", img: "https://stevie2303.github.io/rekenspel2/3tijgers.png", opties: ["2", "3", "4"], juist: "3" }
     ],
   medium: [
     { vraag: "Wie viele Lastwagen siehst du?", img: "https://stevie2303.github.io/rekenspel2/8vrachtwagens.jpg", opties: ["7", "8", "9"], juist: "8" },
@@ -333,13 +334,21 @@ speechSynthesis.speak(utterance);
     { vraag: "Wie viele Boote siehst du?", img: "https://stevie2303.github.io/rekenspel2/5boten.jpg", opties: ["4", "5", "6"], juist: "5" },
     { vraag: "Wie viele Flugzeuge siehst du?", img: "https://stevie2303.github.io/rekenspel2/7vliegtuigen.jpg", opties: ["7", "8", "9"], juist: "7" },
     { vraag: "Wie viele Stühle siehst du?", img: "https://stevie2303.github.io/rekenspel2/9stoelen.jpg", opties: ["8", "9", "10"], juist: "9" },
-    { vraag: "Wie viele Koffer siehst du?", img: "https://stevie2303.github.io/rekenspel2/7koffers.jpg", opties: ["6", "7", "8"], juist: "7" },
+    { vraag: "Wie viele Koffer siehst du?", img: "https://stevie2303.github.io/rekenspel2/7koffers.png", opties: ["6", "7", "8"], juist: "7" },
     { vraag: "Wie viele Laternen siehst du?", img: "https://stevie2303.github.io/rekenspel2/9lantaarns.jpg", opties: ["9", "10", "8"], juist: "9" }
     ],
   difficult: [
-    { vraag: "Hoeveel sterren zie je?", img: "images/sterren8.jpg", opties: ["7", "8", "9"], juist: "8" },
-    { vraag: "Hoeveel boeken zie je?", img: "images/boeken10.jpg", opties: ["9", "10", "11"], juist: "10" }
-  ]
+  { vraag: "Wie viele Schmetterlinge siehst du?", img: "images/12schmetterlinge.jpg", opties: ["11", "12", "13"], juist: "12" },
+  { vraag: "Wie viele Schneemänner siehst du?", img: "images/14schneemaenner.jpg", opties: ["13", "14", "15"], juist: "14" },
+  { vraag: "Wie viele Raketen siehst du?", img: "images/11raketen.jpg", opties: ["10", "11", "12"], juist: "11" },
+  { vraag: "Wie viele Laternen siehst du?", img: "images/13laternen.jpg", opties: ["12", "13", "14"], juist: "13" },
+  { vraag: "Wie viele Roboter siehst du?", img: "images/10roboter.jpg", opties: ["10", "11", "12"], juist: "10" },
+  { vraag: "Wie viele Pinsel siehst du?", img: "images/15pinsel.jpg", opties: ["14", "15", "13"], juist: "15" },
+  { vraag: "Wie viele Zauberhüte siehst du?", img: "images/12zauberhuete.jpg", opties: ["11", "12", "13"], juist: "12" },
+  { vraag: "Wie viele Teleskope siehst du?", img: "images/13teleskope.jpg", opties: ["12", "13", "14"], juist: "13" },
+  { vraag: "Wie viele Regenbogen siehst du?", img: "images/14regenbogen.jpg", opties: ["13", "14", "15"], juist: "14" },
+  { vraag: "Wie viele Kronen siehst du?", img: "images/15kronen.jpg", opties: ["15", "14", "13"], juist: "15" }
+]
 };
      
     let rekenIndex = 0;
@@ -352,6 +361,9 @@ speechSynthesis.speak(utterance);
         document.getElementById("word").textContent = "Klaar met rekenen!";
         document.getElementById("images").innerHTML = "";
         document.getElementById("feedback").textContent = `Je had ${rekenscore} goed!`;
+
+	document.getElementById("reken-pdf-btn").style.display = "inline-block";
+        document.getElementById("reken-herstart-btn").style.display = "inline-block";
         return;
       }
      if (rekenIndex >= rekenOpdrachten.length) {
@@ -416,7 +428,6 @@ speechSynthesis.speak(utterance);
 wrapper.appendChild(afbeelding);
 wrapper.appendChild(optiesContainer);
 document.getElementById("images").appendChild(wrapper); 
-document.getElementById("reken-pdf-btn").style.display = "inline-block";
     }
 
     function startGamerekenen() {

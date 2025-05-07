@@ -360,7 +360,7 @@ speechSynthesis.speak(utterance);
       wrapper.style.display = "flex";
       wrapper.style.flexDirection = "column";  // <-- dit zorgt voor verticale volgorde
       wrapper.style.alignItems = "center";
-      wrapper.style.gap = "20px"; // ruimte tussen afbeelding en knoppen
+      wrapper.style.gap = "50px"; // ruimte tussen afbeelding en knoppen
 
       const afbeelding = document.createElement("img");
       afbeelding.src = opdracht.img;
@@ -375,8 +375,8 @@ speechSynthesis.speak(utterance);
       opdracht.opties.forEach(optie => {
         const knop = document.createElement("button");
         knop.textContent = optie;
-        knop.style.margin = "10px";
-        knop.style.padding = "30px 50px";
+        knop.style.margin = "20px";
+        knop.style.padding = "100px 100px";
         knop.style.fontSize = "18px";
         knop.style.width = "100px";  // optioneel, gelijke breedte
      knop.onclick = () => {

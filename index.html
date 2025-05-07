@@ -375,10 +375,15 @@ speechSynthesis.speak(utterance);
       opdracht.opties.forEach(optie => {
         const knop = document.createElement("button");
         knop.textContent = optie;
+        knop.style.display = "flex";
+	knop.style.justifyContent = "center";
+	knop.style.alignItems = "center";
         knop.style.margin = "20px";
-        knop.style.padding = "100px 100px";
-        knop.style.fontSize = "18px";
+        knop.style.padding = "70px 70px";
+        knop.style.fontSize = "30px";
         knop.style.width = "100px";  // optioneel, gelijke breedte
+	knop.style.height = "120px";  // voeg toe voor verticale centrering
+	knop.style.borderRadius = "10px";  // optioneel voor mooiere hoeken
      knop.onclick = () => {
           if (optie === opdracht.juist) {
             document.getElementById("feedback").textContent = "Goed!";

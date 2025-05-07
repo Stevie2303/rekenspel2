@@ -117,7 +117,7 @@
   <div id="feedback"></div>
   <div id="score"></div>
   <button id="pdf-btn" onclick="downloadPDF()">Download verslag als PDF</button>
-
+  <button id="reken-pdf-btn" style="display:none;" onclick="downloadRekenPDF()">Download Rekenspel PDF</button>
   <script>
     
 
@@ -307,7 +307,8 @@ speechSynthesis.speak(utterance);
 
   </script>
   <script>
-    const requiredCorrectRekenen = 10;
+    let rekenResultaten = [];
+    const requiredCorrectRekenen = 2;
     let rekenscore = 0;
     function updateProgressBarRekenen() {
       const progress = (rekenscore / requiredCorrectRekenen) * 100;
@@ -316,12 +317,12 @@ speechSynthesis.speak(utterance);
 
     const rekenOpdrachtenPerNiveau = {
         easy: [
-    { vraag: "Wie viele Bälle siehst du?", img: "3ballen.jpg", opties: ["3", "4", "5"], juist: "3" },
-    { vraag: "Wie viele Äpfel siehst du?", img: "4appels.jpg", opties: ["4", "5", "6"], juist: "4" },
-    { vraag: "Wie viele Laptops siehst du?", img: "4laptops.jpg", opties: ["4", "5", "6"], juist: "4" },
-    { vraag: "Wie viele Töpfe siehst du?", img: "1pot.jpg", opties: ["1", "2", "3"], juist: "1" },
-    { vraag: "Wie viele Bären siehst du?", img: "2beren.jpg", opties: ["2", "3", "4"], juist: "2" },
-    { vraag: "Wie viele Tiger siehst du?", img: "3tijgers.jpg", opties: ["2", "3", "4"], juist: "3" }
+    { vraag: "Wie viele Bälle siehst du?", img: "https://stevie2303.github.io/rekenspel2/3ballen.jpg", opties: ["3", "4", "5"], juist: "3" },
+    { vraag: "Wie viele Äpfel siehst du?", img: "https://stevie2303.github.io/rekenspel2/4appels.jpg", opties: ["4", "5", "6"], juist: "4" },
+    { vraag: "Wie viele Laptops siehst du?", img: "https://stevie2303.github.io/rekenspel2/4laptops.jpg", opties: ["4", "5", "6"], juist: "4" },
+    { vraag: "Wie viele Töpfe siehst du?", img: "https://stevie2303.github.io/rekenspel2/1pot.jpg", opties: ["1", "2", "3"], juist: "1" },
+    { vraag: "Wie viele Bären siehst du?", img: "https://stevie2303.github.io/rekenspel2/2beren.jpg", opties: ["2", "3", "4"], juist: "2" },
+    { vraag: "Wie viele Tiger siehst du?", img: "https://stevie2303.github.io/rekenspel2/3tijgers.jpg", opties: ["2", "3", "4"], juist: "3" }
     ],
   medium: [
     { vraag: "Hoeveel fietsen zie je?", img: "images/fietsen4.jpg", opties: ["3", "4", "5"], juist: "4" },
@@ -391,6 +392,12 @@ speechSynthesis.speak(utterance);
           } else {
             document.getElementById("feedback").textContent = "Helaas!";
           }
+	rekenResultaten.push({
+        vraag: opdracht.vraag,
+        gegevenAntwoord: optie,
+        juisteAntwoord: opdracht.juist,
+        afbeelding: opdracht.img
+	});
           rekenIndex++;
           updateProgressBarRekenen();
           setTimeout(showRekenOpdracht, 1000);
@@ -401,6 +408,7 @@ speechSynthesis.speak(utterance);
 wrapper.appendChild(afbeelding);
 wrapper.appendChild(optiesContainer);
 document.getElementById("images").appendChild(wrapper); 
+document.getElementById("reken-pdf-btn").style.display = "inline-block";
     }
 
     function startGamerekenen() {
@@ -422,6 +430,59 @@ document.getElementById("images").appendChild(wrapper);
       updateProgressBarRekenen();
       showRekenOpdracht();
     }
+    async function downloadRekenPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+    doc.setFontSize(14);
+    doc.text(`Verslag Rekenspel – ${childName}`, 10, 10);
+    doc.text(`Totaal goed: ${rekenscore} van ${rekenResultaten.length}`, 10, 20);
+
+    let y = 30;
+
+    for (let i = 0; i < rekenResultaten.length; i++) {
+    const r = rekenResultaten[i];
+
+    doc.setFontSize(12);
+    doc.text(`${i + 1}. ${r.vraag}`, 10, y);
+    doc.text(`Jouw antwoord: ${r.gegevenAntwoord}`, 10, y + 6);
+    doc.text(`Correct antwoord: ${r.juisteAntwoord}`, 10, y + 12);
+
+    // Afbeelding laden als base64
+    try {
+      const base64Img = await toDataURL(r.afbeelding);
+      doc.addImage(base64Img, "JPEG", 140, y - 5, 50, 40);
+    } catch (e) {
+      console.error("Afbeelding kon niet geladen worden:", r.afbeelding);
+    }
+
+    y += 50;
+    if (y > 260) {
+      doc.addPage();
+      y = 20;
+    }
+  }
+
+  doc.save(`rekenVerslag_${childName}.pdf`);
+}
+  function toDataURL(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = this.naturalWidth;
+        canvas.height = this.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(this, 0, 0);
+        resolve(canvas.toDataURL("image/jpeg"));
+    };
+    img.onerror = () => reject("Kon afbeelding niet laden.");
+    img.src = url;
+  });
+}
+   
+
   </script>
 </body>
 </html>

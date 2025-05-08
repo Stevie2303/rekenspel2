@@ -80,6 +80,17 @@
     	width: 45vw;
    	 height: auto;
     }
+    #herhaal-spraak-btn {
+      display: inline-block;
+      padding: 70px 70px;
+      font-size: 30px;
+      width: 200px;
+      height: 160px;
+      border-radius: 10px;
+      border: 2px solid #333;
+      background-color: #fff;
+      cursor: pointer;
+      }
 }
   </style>
 </head>
@@ -127,7 +138,7 @@
   <button id="pdf-btn" onclick="downloadPDF()">Download verslag als PDF</button>
   <button id="reken-pdf-btn" style="display:none;" onclick="downloadRekenPDF()">Download Rekenspel PDF</button>
   <button id="reken-herstart-btn" style="display:none;" onclick="startGamerekenen()">Opnieuw starten</button>
-  <button id="herhaal-spraak-btn"style=display:none;" onclick="herhaalSpraak()">Opnieuw spraak</button>
+  <button id="herhaal-spraak-btn"style=display:none;" onclick="herhaalSpraak()">wiederholen</button>
   </div>
   <div class="image-container" id="images"></div>
   <script>
@@ -482,7 +493,17 @@ async function initializeVoice() {
       const herhaalKnop = document.getElementById("herhaal-spraak-btn");
       herhaalKnop.style.display = "inline-block";
       herhaalKnop.style.position = "static";
-
+      herhaalKnop.style.width = "200px";
+herhaalKnop.style.height = "120px";
+herhaalKnop.style.padding = "70px 70px";
+herhaalKnop.style.display = "flex";
+herhaalKnop.style.justifyContent = "center";
+herhaalKnop.style.alignItems = "center";
+herhaalKnop.style.fontSize = "30px";
+herhaalKnop.style.borderRadius = "10px";
+herhaalKnop.style.border = "2px solid #333";
+herhaalKnop.style.backgroundColor = "#fff";
+herhaalKnop.style.cursor = "pointer";
 
       afbeeldingMetKnop.appendChild(afbeelding);
       afbeeldingMetKnop.appendChild(herhaalKnop);

@@ -103,6 +103,8 @@
     <br>
     <button onclick="startGameWoordenschat()">Start spel 1</button>
     <button onclick="startGamerekenen()">Start spel 2</button>
+
+
   </div>
 
   <div id="progress-container-woordenschat" class="progress-container">
@@ -119,6 +121,9 @@
   <button id="pdf-btn" onclick="downloadPDF()">Download verslag als PDF</button>
   <button id="reken-pdf-btn" style="display:none;" onclick="downloadRekenPDF()">Download Rekenspel PDF</button>
   <button id="reken-herstart-btn" style="display:none;" onclick="startGamerekenen()">Opnieuw starten</button>
+  <button id="herhaal-spraak-btn"style=display:none;" onclick="herhaalSpraak()">Opnieuw spraak</button>
+  </div>
+  <div class="image-container" id="images"></div>
   <script>
     
 
@@ -308,6 +313,7 @@ speechSynthesis.speak(utterance);
 
   </script>
   <script>
+    let huidigeVraag = "";
     let rekenResultaten = [];
     const requiredCorrectRekenen = 10;
     let rekenscore = 0;
@@ -352,10 +358,49 @@ speechSynthesis.speak(utterance);
 };
      
     let rekenIndex = 0;
+    let germanVoice2 = null;
     let totaalRekenVragen = 0;
     function shuffle(array) {
        return array.sort(() => Math.random() - 0.5);
     }
+    function herhaalSpraak() {
+      if (huidigeVraag) {
+        spreekTekst(huidigeVraag);
+    }
+}
+    function loadVoices() {
+      return new Promise((resolve) => {
+    	let voices = speechSynthesis.getVoices();
+    	if (voices.length) {
+      	  resolve(voices);
+    	} else {
+      speechSynthesis.onvoiceschanged = () => {
+        voices = speechSynthesis.getVoices();
+        resolve(voices);
+      };
+    }
+  });
+}
+async function initializeVoice() {
+  const voices = await loadVoices();
+  germanVoice2 = voices.find(voice => voice.lang === 'de-DE');
+  if (!germanVoice2) {
+    console.warn("Duitse stem niet beschikbaar.");
+  }
+}
+  function spreekTekst(tekst) {
+    if (germanVoice2) {
+      const utterance = new SpeechSynthesisUtterance(tekst);
+      utterance.voice = germanVoice2;
+      utterance.lang = 'de-DE';
+      speechSynthesis.cancel(); // voorkom overlap
+      speechSynthesis.speak(utterance);
+    } else {
+      console.warn("Duitse stem niet beschikbaar.");
+  }
+}
+  
+
     function showRekenOpdracht() {
       if (rekenscore >= requiredCorrectRekenen) {
         document.getElementById("word").textContent = "Klaar met rekenen!";
@@ -373,6 +418,10 @@ speechSynthesis.speak(utterance);
      }
 
       const opdracht = rekenOpdrachten[rekenIndex];
+      huidigeVraag = opdracht.vraag;
+      spreekTekst(huidigeVraag);
+      document.getElementById("herhaal-spraak-btn").style.display = "inline-block";
+
       document.getElementById("word").textContent = opdracht.vraag;
       document.getElementById("feedback").textContent = "";
       document.getElementById("images").innerHTML = "";
@@ -383,11 +432,24 @@ speechSynthesis.speak(utterance);
       wrapper.style.alignItems = "center";
       wrapper.style.gap = "50px"; // ruimte tussen afbeelding en knoppen
 
+      const afbeeldingMetKnop = document.createElement("div");
+      afbeeldingMetKnop.style.display = "flex";
+      afbeeldingMetKnop.style.alignItems = "center";
+      afbeeldingMetKnop.style.justifyContent = "center";
+      afbeeldingMetKnop.style.gap = "20px"; // ruimte tussen afbeelding en knop
+    
       const afbeelding = document.createElement("img");
       afbeelding.src = opdracht.img;
       afbeelding.style.width = "300px";
       afbeelding.style.height = "auto";
 
+      const herhaalKnop = document.getElementById("herhaal-spraak-btn");
+      herhaalKnop.style.display = "inline-block";
+      herhaalKnop.style.position = "static";
+
+
+      afbeeldingMetKnop.appendChild(afbeelding);
+      afbeeldingMetKnop.appendChild(herhaalKnop);
 
       const optiesContainer = document.createElement("div");
       optiesContainer.style.display = "flex";
@@ -425,12 +487,13 @@ speechSynthesis.speak(utterance);
      optiesContainer.appendChild(knop);
    
       });
-wrapper.appendChild(afbeelding);
+wrapper.appendChild(afbeeldingMetKnop);
 wrapper.appendChild(optiesContainer);
 document.getElementById("images").appendChild(wrapper); 
     }
 
-    function startGamerekenen() {
+    async function startGamerekenen() {
+      await initializeVoice();
       rekenscore = 0;
       rekenIndex = 0;
 
@@ -500,8 +563,10 @@ document.getElementById("images").appendChild(wrapper);
     img.src = url;
   });
 }
-   
 
+window.onload = () => {
+  initializeVoice();
+};
   </script>
 </body>
 </html>

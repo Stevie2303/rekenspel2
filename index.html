@@ -25,7 +25,7 @@
       transition: width 0.5s ease;
     }
     .image-container {
-      display: flex;
+      display: block;
       justify-content: center;
       gap: 20px;
       margin: 20px 0;
@@ -75,6 +75,12 @@
     #progress-container-rekenen {
       display: none;
     }
+    @media (max-width: 600px) {
+      #images img {
+    	width: 45vw;
+   	 height: auto;
+    }
+}
   </style>
 </head>
 <body>
@@ -242,12 +248,42 @@ speechSynthesis.speak(utterance);
       document.getElementById("feedback").textContent = "";
       document.getElementById("images").innerHTML = "";
 
-      currentRound.options.forEach(imgUrl => {
-        const img = document.createElement("img");
-        img.src = imgUrl;
-        img.onclick = () => handleChoice(imgUrl);
-        document.getElementById("images").appendChild(img);
-      });
+  const imageContainer = document.getElementById("images");
+  imageContainer.innerHTML = ""; // Leegmaken
+
+let rows;
+  if (currentRound.options.length === 5) {
+  // Specifiek 2-2-1 verdeling bij 5 afbeeldingen
+  rows = [[0, 1], [2, 3], [4]];
+  } else if (currentRound.options.length === 4) {
+  // Specifiek 2-2-1 verdeling bij 5 afbeeldingen
+  rows = [[0, 1], [2, 3]];
+  } else {
+  // Anders alle afbeeldingen op 1 rij
+  rows = [currentRound.options.map((_, i) => i)];
+}
+
+rows.forEach(indices => {
+  const rowDiv = document.createElement("div");
+  rowDiv.style.display = "flex";
+  rowDiv.style.justifyContent = "center";
+  rowDiv.style.gap = "20px";
+  rowDiv.style.marginBottom = "20px";
+  
+
+  indices.forEach(i => {
+    const img = document.createElement("img");
+    img.src = currentRound.options[i];
+    img.style.width = "160px";
+    img.style.height = "160px";
+    img.style.borderRadius = "12px";
+    img.style.cursor = "pointer";
+    img.onclick = () => handleChoice(currentRound.options[i]);
+    rowDiv.appendChild(img);
+  });
+
+  imageContainer.appendChild(rowDiv);
+});
     }
 
     function handleChoice(chosenImg) {

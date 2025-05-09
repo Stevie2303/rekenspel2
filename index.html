@@ -405,7 +405,6 @@ rows.forEach(indices => {
 };
      
     let rekenIndex = 0;
-    let germanVoice2 = null;
     let totaalRekenVragen = 0;
     function shuffle(array) {
        return array.sort(() => Math.random() - 0.5);
@@ -430,15 +429,13 @@ rows.forEach(indices => {
 }
 async function initializeVoice() {
   const voices = await loadVoices();
-  germanVoice2 = voices.find(voice => voice.lang === 'de-DE');
-  if (!germanVoice2) {
-    console.warn("Duitse stem niet beschikbaar.");
-  }
+  germanVoice = voices.find(voice => voice.lang === 'de-DE');
+
 }
   function spreekTekst(tekst) {
-    if (germanVoice2) {
+    if (germanVoice) {
       const utterance = new SpeechSynthesisUtterance(tekst);
-      utterance.voice = germanVoice2;
+      utterance.voice = germanVoice;
       utterance.lang = 'de-DE';
       speechSynthesis.cancel(); // voorkom overlap
       speechSynthesis.speak(utterance);
@@ -469,7 +466,6 @@ async function initializeVoice() {
       huidigeVraag = opdracht.vraag;
       spreekTekst(huidigeVraag);
       const herhaalKnop = document.getElementById("herhaal-spraak-btn");
-
       document.getElementById("word").textContent = opdracht.vraag;
       document.getElementById("feedback").textContent = "";
       document.getElementById("images").innerHTML = "";

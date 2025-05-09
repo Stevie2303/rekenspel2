@@ -428,9 +428,27 @@ rows.forEach(indices => {
   });
 }
 async function initializeVoice() {
-  const voices = await loadVoices();
-  germanVoice = voices.find(voice => voice.lang === 'de-DE');
-
+    const voices = await loadVoices();
+    germanVoice = voices.find(voice => voice.lang === 'de-DE')|| voices[0];
+    if (!germanVoice) {
+        console.warn("Duitse stem niet beschikbaar. Probeer opnieuw.");
+    }
+}
+async function loadVoices() {
+    return new Promise((resolve) => {
+        let voices = speechSynthesis.getVoices();
+        if (voices.length) {
+            resolve(voices);
+        } else {
+            const interval = setInterval(() => {
+                voices = speechSynthesis.getVoices();
+                if (voices.length) {
+                    clearInterval(interval);
+                    resolve(voices);
+                }
+            }, 100);
+        }
+    });
 }
   function spreekTekst(tekst) {
     if (germanVoice) {
@@ -452,7 +470,7 @@ async function initializeVoice() {
         document.getElementById("images").innerHTML = "";
         document.getElementById("feedback").textContent = `Je had ${rekenscore} goed!`;
 
-	document.getElementById("reken-pdf-btn").style.display = "inline-block";
+	      document.getElementById("reken-pdf-btn").style.display = "inline-block";
         document.getElementById("reken-herstart-btn").style.display = "inline-block";
         return;
       }
@@ -491,16 +509,16 @@ async function initializeVoice() {
       herhaalKnop.style.display = "inline-block";
       herhaalKnop.style.position = "static";
       herhaalKnop.style.width = "200px";
-herhaalKnop.style.height = "120px";
-herhaalKnop.style.padding = "70px 70px";
-herhaalKnop.style.display = "flex";
-herhaalKnop.style.justifyContent = "center";
-herhaalKnop.style.alignItems = "center";
-herhaalKnop.style.fontSize = "30px";
-herhaalKnop.style.borderRadius = "10px";
-herhaalKnop.style.border = "2px solid #333";
-herhaalKnop.style.backgroundColor = "#fff";
-herhaalKnop.style.cursor = "pointer";
+      herhaalKnop.style.height = "120px";
+      herhaalKnop.style.padding = "70px 70px";
+      herhaalKnop.style.display = "flex";
+      herhaalKnop.style.justifyContent = "center";
+      herhaalKnop.style.alignItems = "center";
+      herhaalKnop.style.fontSize = "30px";
+      herhaalKnop.style.borderRadius = "10px";
+      herhaalKnop.style.border = "2px solid #333";
+      herhaalKnop.style.backgroundColor = "#fff";
+      herhaalKnop.style.cursor = "pointer";
 
       afbeeldingMetKnop.appendChild(afbeelding);
       afbeeldingMetKnop.appendChild(herhaalKnop);
@@ -513,22 +531,22 @@ herhaalKnop.style.cursor = "pointer";
         const knop = document.createElement("button");
         knop.textContent = optie;
         knop.style.display = "flex";
-	knop.style.justifyContent = "center";
-	knop.style.alignItems = "center";
+        knop.style.justifyContent = "center";
+        knop.style.alignItems = "center";
         knop.style.margin = "20px";
         knop.style.padding = "70px 70px";
         knop.style.fontSize = "30px";
         knop.style.width = "100px";  // optioneel, gelijke breedte
-	knop.style.height = "120px";  // voeg toe voor verticale centrering
-	knop.style.borderRadius = "10px";  // optioneel voor mooiere hoeken
-     knop.onclick = () => {
+        knop.style.height = "120px";  // voeg toe voor verticale centrering
+        knop.style.borderRadius = "10px";  // optioneel voor mooiere hoeken
+        knop.onclick = () => {
           if (optie === opdracht.juist) {
             document.getElementById("feedback").textContent = "Goed!";
             rekenscore++;
           } else {
             document.getElementById("feedback").textContent = "Helaas!";
           }
-	rekenResultaten.push({
+	      rekenResultaten.push({
         vraag: opdracht.vraag,
         gegevenAntwoord: optie,
         juisteAntwoord: opdracht.juist,

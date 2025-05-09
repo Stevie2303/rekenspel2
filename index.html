@@ -450,6 +450,7 @@ async function initializeVoice() {
 
     function showRekenOpdracht() {
       if (rekenscore >= requiredCorrectRekenen) {
+
         document.getElementById("word").textContent = "Klaar met rekenen!";
         document.getElementById("images").innerHTML = "";
         document.getElementById("feedback").textContent = `Je had ${rekenscore} goed!`;
@@ -467,12 +468,13 @@ async function initializeVoice() {
       const opdracht = rekenOpdrachten[rekenIndex];
       huidigeVraag = opdracht.vraag;
       spreekTekst(huidigeVraag);
-      document.getElementById("herhaal-spraak-btn").style.display = "inline-block";
+      const herhaalKnop = document.getElementById("herhaal-spraak-btn");
 
       document.getElementById("word").textContent = opdracht.vraag;
       document.getElementById("feedback").textContent = "";
       document.getElementById("images").innerHTML = "";
       document.getElementById("pagetitel").textContent = "Reken Spel";
+
       const wrapper = document.createElement("div");
       wrapper.style.display = "flex";
       wrapper.style.flexDirection = "column";  // <-- dit zorgt voor verticale volgorde
@@ -490,7 +492,6 @@ async function initializeVoice() {
       afbeelding.style.width = "300px";
       afbeelding.style.height = "auto";
 
-      const herhaalKnop = document.getElementById("herhaal-spraak-btn");
       herhaalKnop.style.display = "inline-block";
       herhaalKnop.style.position = "static";
       herhaalKnop.style.width = "200px";
@@ -507,7 +508,7 @@ herhaalKnop.style.cursor = "pointer";
 
       afbeeldingMetKnop.appendChild(afbeelding);
       afbeeldingMetKnop.appendChild(herhaalKnop);
-
+      
       const optiesContainer = document.createElement("div");
       optiesContainer.style.display = "flex";
       optiesContainer.style.flexDirection = "column";
@@ -537,9 +538,11 @@ herhaalKnop.style.cursor = "pointer";
         juisteAntwoord: opdracht.juist,
         afbeelding: opdracht.img
 	});
-          rekenIndex++;
-          updateProgressBarRekenen();
-          setTimeout(showRekenOpdracht, 1000);
+	setTimeout(() => {
+	  rekenIndex++;
+	  updateProgressBarRekenen();
+ 	 showRekenOpdracht();
+	}, 1000);
         };
      optiesContainer.appendChild(knop);
    
